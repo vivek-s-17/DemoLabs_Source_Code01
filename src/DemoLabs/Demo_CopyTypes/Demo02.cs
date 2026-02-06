@@ -1,6 +1,6 @@
 ﻿
-// Demo of REFERENCE COPY
-namespace Demo_CopyTypes.Demo01
+// Demo of SHALLOW COPY
+namespace Demo_CopyTypes.Demo02
 {
     public class Car
     {
@@ -22,9 +22,12 @@ namespace Demo_CopyTypes.Demo01
             objCar.RegNo = "KA 01 Car 01";
             objCar.ObjEngine = new Engine();
             objCar.ObjEngine.BHP = 1000;
-            
-            // Reference
-            Car objCopy = objCar;
+
+
+            // Shallow Copy
+            Car objCopy = new Car();
+            objCopy.RegNo = objCar.RegNo;           // value type assignment
+            objCopy.ObjEngine = objCar.ObjEngine;   // reference type assignment
 
             Console.WriteLine("-- Before changing the data");
             Console.WriteLine("Car: {0} {1}", objCar.RegNo, objCar.ObjEngine.BHP);

@@ -5,13 +5,20 @@
         static void Main(string[] args)
         {
             Console.WriteLine("------------------------- reference copy version");
-            Demo01.RunThis.Run1();
+            Demo01.RunThis.Run();
 
             Console.WriteLine("------------------------- shallow copy version");
-            Demo01.RunThis.Run2();
+            Demo02.RunThis.Run();
 
             Console.WriteLine("------------------------- deep copy version");
-            Demo01.RunThis.Run3();
+            Demo03.RunThis.Run();
+
+            Console.WriteLine("------------------------- ICloneable.Car version");
+            Demo04.RunThis.Run();
+
+            Console.WriteLine("------------------------- ICloneable.Car +  ICloneable.Engine version");
+            Demo05.RunThis.Run();
         }
+
     }
 }

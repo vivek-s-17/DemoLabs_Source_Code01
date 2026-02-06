@@ -1,12 +1,23 @@
 ﻿
-// Demo of REFERENCE COPY
-namespace Demo_CopyTypes.Demo01
+// Demo of ICloneable (shallow copy example)
+namespace Demo_CopyTypes.Demo04
 {
     public class Car
+        : System.ICloneable
     {
         public string RegNo { get; set;  }
 
         public Engine ObjEngine { get; set; }
+
+
+        #region System.ICloneable members
+        
+        public object Clone()
+        {
+            return this.MemberwiseClone();
+        }
+
+        #endregion
     }
 
     public class Engine
@@ -22,9 +33,10 @@ namespace Demo_CopyTypes.Demo01
             objCar.RegNo = "KA 01 Car 01";
             objCar.ObjEngine = new Engine();
             objCar.ObjEngine.BHP = 1000;
-            
-            // Reference
-            Car objCopy = objCar;
+
+
+            // IClonable interface example
+            Car objCopy = (Car)objCar.Clone();
 
             Console.WriteLine("-- Before changing the data");
             Console.WriteLine("Car: {0} {1}", objCar.RegNo, objCar.ObjEngine.BHP);

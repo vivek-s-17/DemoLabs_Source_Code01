@@ -1,17 +1,42 @@
 ﻿
-// Demo of REFERENCE COPY
-namespace Demo_CopyTypes.Demo01
+// Demo of ICloneable (deep copy example)
+// NOTE: implement ICloneable to all aggregated objects!
+//       don't implement in aggregated objects results in SHALLOW COPY (Demo04 example)
+namespace Demo_CopyTypes.Demo05
 {
     public class Car
+        : System.ICloneable
     {
         public string RegNo { get; set;  }
 
         public Engine ObjEngine { get; set; }
+
+
+        #region System.ICloneable members
+        
+        public object Clone()
+        {
+            Car objClone = (Car)this.MemberwiseClone();
+            objClone.ObjEngine = (Engine)this.ObjEngine.Clone();
+            return objClone;
+        }
+
+        #endregion
     }
 
     public class Engine
+        : System.ICloneable
     {
         public int BHP { get; set; }
+
+        #region System.ICloneable members
+
+        public object Clone()
+        {
+            return this.MemberwiseClone();
+        }
+
+        #endregion
     }
 
     public static class RunThis
@@ -22,9 +47,10 @@ namespace Demo_CopyTypes.Demo01
             objCar.RegNo = "KA 01 Car 01";
             objCar.ObjEngine = new Engine();
             objCar.ObjEngine.BHP = 1000;
-            
-            // Reference
-            Car objCopy = objCar;
+
+
+            // IClonable interface example
+            Car objCopy = (Car)objCar.Clone();
 
             Console.WriteLine("-- Before changing the data");
             Console.WriteLine("Car: {0} {1}", objCar.RegNo, objCar.ObjEngine.BHP);
