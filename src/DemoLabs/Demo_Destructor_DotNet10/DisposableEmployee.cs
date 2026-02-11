@@ -36,5 +36,7 @@ namespace Demo_Destructor_DotNet10
             Console.WriteLine("Dispose got called!");
             isDisposed = true;
         }
+
+        #endregion
     }
 }
