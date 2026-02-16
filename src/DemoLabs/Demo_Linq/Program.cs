@@ -19,8 +19,11 @@
             // Demo05.Demo.RunThis();               // JOIN
             // Console.WriteLine();
 
-            Demo06.Demo.RunThis();               // Aggregate Functions using GROUP
-            Console.WriteLine();
+            // Demo06.Demo.RunThis();               // Aggregate Functions using GROUP
+            // Console.WriteLine();
+
+            Demo07_LinqParallel.RunThis();
+
         }
     }
 }

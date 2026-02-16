@@ -1,0 +1,22 @@
+// How the "using" statement block is internally translated to its "try-finally" statement version.
+
+using StreamReader streamReader = new StreamReader("TextFile.txt");
+
+string textFromFile = streamReader.ReadToEnd();
+Console.WriteLine( textFromFile );
+
+---------------------------------------------------------------------------
+
+StreamReader streamReader = new StreamReader("TextFile.txt");
+try 
+{
+	string textFromFile = streamReader.ReadToEnd();
+	Console.WriteLine( textFromFile );
+}
+finally
+{
+	if ( streamReader != null )
+	{
+		( (IDisposable)streamReader ).Dispose();
+	}
+}
