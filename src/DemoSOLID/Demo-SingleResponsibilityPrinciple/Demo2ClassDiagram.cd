@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Demo_SingleResponsibility.Demo02.Logger" BaseTypeListCollapsed="true">
+    <Position X="3.25" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAYAAAAAAAAAAAAAAAAAAAAAAAEAAAAA=</HashCode>
+      <FileName>Demo02.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.204" />
+  </Class>
+  <Class Name="Demo_SingleResponsibility.Demo02.MailSender">
+    <Position X="5.5" Y="1" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAEAAAAAAAAAAAAAAAAAABAAgBAAAAAAAAABAAAAAA=</HashCode>
+      <FileName>Demo02.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Demo_SingleResponsibility.Demo02.Invoice">
+    <Position X="1" Y="1" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAACAQAAAAACAAAAAgGAAAAA=</HashCode>
+      <FileName>Demo02.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Interface Name="Demo_SingleResponsibility.Demo02.ILogger">
+    <Position X="3.25" Y="1" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAYAAAAAAAAAAAAAAAAAAAAAAAEAAAAA=</HashCode>
+      <FileName>Demo02.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Segoe UI" Size="10" />
+</ClassDiagram>

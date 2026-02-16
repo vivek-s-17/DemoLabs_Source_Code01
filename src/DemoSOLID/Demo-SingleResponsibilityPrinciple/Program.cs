@@ -1,0 +1,3 @@
+﻿Console.WriteLine("Demo of SINGLE RESPONSIBLITY PRINCIPLE");
+
+

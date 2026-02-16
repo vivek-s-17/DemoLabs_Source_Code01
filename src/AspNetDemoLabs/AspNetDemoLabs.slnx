@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="DemoWebApp1.Api/DemoWebApp1.Api.csproj" />
+  <Project Path="DemoWebApp1.MinimalApi/DemoWebApp1.MinimalApi.csproj" />
+  <Project Path="DemoWebApp1.MVC/DemoWebApp1.MVC.csproj" />
+  <Project Path="DemoWebApp1/DemoWebApp1.csproj" />
+</Solution>
