@@ -63,3 +63,51 @@ Content-Type: application/json
 }
 
 ###
+
+
+POST {{apiUrl}}
+Content-Type: application/json
+
+{
+    "ProductId": "abc",
+    "Name": "New Product 1000",
+    "Description": "some description",
+    "Price": 45.75
+}
+
+###
+
+
+POST {{apiUrl}}
+Content-Type: application/json
+
+{
+    "ProductId": "500",
+    "Name": "New Product 1000",
+    "Description": "some description",
+    "Price": 45.75
+}
+
+###
+
+
+POST {{apiUrl}}
+Content-Type: application/json
+
+{
+    "Name": "New Product something",
+    "Description": "some description",
+    "Price": 45.75
+}
+
+###
+
+POST {{apiUrl}}
+Content-Type: application/json
+
+{
+    "Description": "some description",
+    "Price": 99.75
+}
+
+###

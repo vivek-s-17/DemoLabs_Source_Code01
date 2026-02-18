@@ -1,0 +1,22 @@
+@Demo_Middleware_HostAddress = https://localhost:7260
+
+GET {{Demo_Middleware_HostAddress}}/weatherforecast/
+
+###
+
+GET {{Demo_Middleware_HostAddress}}/weatherforecast
+Accept: application/json
+
+###
+
+
+GET {{Demo_Middleware_HostAddress}}/weatherforecast
+Accept: text/xml
+
+###
+
+
+GET {{Demo_Middleware_HostAddress}}/Author
+Accept: application/json
+
+###

@@ -5,7 +5,7 @@
 namespace DemoWebApi.Controllers;
 
 
-[Route("api/[controller]")]
+[Route(template:"api/[controller]")]                                 // Route Pattern
 [ApiController]
 public class ProductsController : ControllerBase
 {
@@ -30,8 +30,9 @@ public class ProductsController : ControllerBase
         }
     }
 
-
-    [HttpGet("GetAll")]
+    // template: GET https://localhost:xxxx/api/[controller]/[action]
+    // GET https://localhost:xxxx/api/Products/GetAll
+    [HttpGet(template:"GetAll")]                        // Route Pattern for the API endpoint 
     public IEnumerable<Product> GetAll()
     {
         return _dataService.GetAllProducts();
@@ -49,6 +50,7 @@ public class ProductsController : ControllerBase
     [HttpPost]
     public void Post([FromBody] Product product)
     {
+        // add the product
         _dataService.AddProduct(product);
     }
 
@@ -56,11 +58,13 @@ public class ProductsController : ControllerBase
     [HttpPut("{id}")]
     public void Put(int id, [FromBody] string value)
     {
+        // edit the product
     }
 
     // DELETE api/<ProductsController>/5
     [HttpDelete("{id}")]
     public void Delete(int id)
     {
+        // remove the product
     }
 }
