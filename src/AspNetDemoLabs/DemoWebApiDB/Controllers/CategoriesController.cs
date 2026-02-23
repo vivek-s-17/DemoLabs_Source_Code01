@@ -136,19 +136,19 @@ public class CategoriesController : ControllerBase
         var category = await _dbContext.Categories
             .AsNoTracking()
             // .Include(c => c.Products)
-            .Where(c => c.CategoryId == id)
+            .Where(c => c.CategoryId == id)         // .Find(id)   <- ONLY ON PRIMARY KEY
             .Select(c => new 
             {
                 CategoryId = c.CategoryId,
                 Name = c.Name,
                 Description = c.Description,
-                Products = c.Products!.Select( p =>
+                Products = c.Products!.Select( p =>             // eager loading occurs here for Products
                  new {
                     ID = p.Id,
                     Name = p.ProductName
                 }).ToList()
             })
-            .FirstOrDefaultAsync();
+            .FirstOrDefaultAsync();                             // .SingleOrDefaultAsync();
 
         if (category is null)
         {

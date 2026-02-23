@@ -41,8 +41,10 @@
   <Project Path="Demo_ParameterTypes/Demo_ParameterTypes.csproj" />
   <Project Path="Demo_Partial/Demo_Partial.csproj" Id="4983962b-a6c1-4c67-a759-bf63d0196300" />
   <Project Path="Demo_PartialMethods/Demo_PartialMethods.csproj" Id="ddea7735-0963-48d2-815a-2ad4b7cc69ad" />
+  <Project Path="Demo_PrimaryConstructor/Demo_PrimaryConstructor.csproj" Id="012c5154-025d-46c1-ada0-63194ae03018" />
   <Project Path="Demo_RangesAndIndices_CS8/Demo_RangesAndIndices_CS8.csproj" />
   <Project Path="Demo_ReadonlyMembers_CS8/Demo_ReadonlyMembers_CS8.csproj" />
+  <Project Path="Demo_RecordType_CS7/Demo_RecordType_C7.csproj" />
   <Project Path="Demo_StringFormatting/Demo_StringFormatting.csproj" />
   <Project Path="Demo_Strings/Demo_Strings.csproj" Id="27886d51-7972-4304-b95d-23b4f9c6cbf9" />
   <Project Path="Demo_Tasks/Demo_Tasks.csproj" />

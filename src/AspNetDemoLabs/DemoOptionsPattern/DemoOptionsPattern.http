@@ -1,0 +1,7 @@
+@DemoOptionsPattern_HostAddress = http://localhost:5117
+
+GET {{DemoOptionsPattern_HostAddress}}/api/Demo/myappoptions
+Accept: application/json
+
+
+###

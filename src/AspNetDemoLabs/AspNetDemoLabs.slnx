@@ -2,6 +2,7 @@
   <Folder Name="/Solution Items/">
     <File Path="Readme.txt" />
   </Folder>
+  <Project Path="DemoOptionsPattern/DemoOptionsPattern.csproj" />
   <Project Path="DemoWebApi/DemoWebApi.csproj" Id="df388c20-7a5f-4128-9a47-c200bb3e337e" />
   <Project Path="DemoWebApiDB/DemoWebApiDB.csproj" Id="2d2ef15e-bdd2-4f1b-b1e0-3d202f137cca" />
   <Project Path="DemoWebApp1.Api/DemoWebApp1.Api.csproj" />

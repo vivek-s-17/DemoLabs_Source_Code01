@@ -59,6 +59,7 @@ public class Category
 
     #region Navigation Properties to Product model (1:many relationship)
 
+
     [XmlIgnore]
     [JsonIgnore]
     public ICollection<Product>? Products { get; set; }

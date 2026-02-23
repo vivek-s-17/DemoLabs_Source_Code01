@@ -1,6 +1,19 @@
-@DemoWebApiDB_HostAddress = http://localhost:5119
+@hostAddress = http://localhost:5119
 
-GET {{DemoWebApiDB_HostAddress}}/weatherforecast/
+GET {{hostAddress}}/weatherforecast/
 Accept: application/json
+
+###
+
+
+GET {{hostAddress}}/api/DemoWithInclude/GetAll
+
+###
+
+GET {{hostAddress}}/api/DemoWithInclude/GetAllWithInclude
+
+###
+
+GET {{hostAddress}}/api/DemoWithInclude/GetProductsOfCategory
 
 ###
