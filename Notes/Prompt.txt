@@ -1,0 +1,67 @@
+Below shown code represents the code I have currently in place in my ASP.NET Web API project being built using .NET 10 with SQL:
+
+----------------------------------------------------------
+GlobalUsings.cs
+----------------------------------------------------------
+
+----------------------------------------------------------
+Program.cs
+----------------------------------------------------------
+
+----------------------------------------------------------
+/Models/Category.cs
+----------------------------------------------------------
+
+----------------------------------------------------------
+/Models/Product.cs
+----------------------------------------------------------
+
+
+----------------------------------------------------------
+
+Ensure that:
+(a) For the EF Models:
+    (1) Validate if the two models I have defined are correct.  
+    (2) Ensure that the commented CREATE TABLE scripts and the models are in sync with each eachother.  
+    (3) Add needed Indexes are defined.
+    (4) Add Check Constraints and Unique Constraints where needed.
+    (5) Feel free to make any needed changes to the EF Data Model(s), or add any other required Models.  
+    (6) Add a scenario where I can use a STORED PROCEDURE.  For example, to show a report listing categories-wise number of products.
+    (7) And, add a scenario where I can also use a VIEW, also.
+(b) Proper DTO Models are defined, to perform the CRUD operations
+(c) Avoid overposting is avoided
+(d) Errors are reported, like
+	(1) In the POST operation, CategoryId should not be received, since it is a DB generated Identity column
+	(2) CategoryName is not duplicate (in both ADD and EDIT operations)
+	(3) The DataAnnotation validators are respected
+	(4) Duplicates are identified and ConflictExceptions are thrown
+	(5) The POST operation only provides the URL to GET the newly inserted object along with 201 response
+	(6) The PUT operation returns "Accepted" or "Rejected" along with the error messages from validation.
+	(7) Use "RFC 7807 Problem Details" to report errors from the API - "ProblemDetails" and "ValidationProblemDetails" for exceptions, like NotFound errors, ValidationExceptions, etc.
+	(8) Use Result Pattern instead of throwing Exceptions from Services to the API Layer.  
+(e) Provide in-line comments wherever needed.
+(f) Provide XML Comments for all the members.
+(g) Add centralized structured logging
+(h) Provide the response assuming the role of an Extremely Senior and Seasoned professional developer, and generate gold-standard code.
+(i) Use RECORD CLASS or RECORD STRUCT where found most suitable.
+(j) Implement Authentication and Authorization
+    (1) Roles - Admin and User
+    (2) JWT based Authentication and Authorization between API and Angular
+    (3) Use ASP.NET Identity Management System, if possible for Roles, Users and Permissions
+(k) Implement Centralized Structured Logging use Serilog.  
+    (1) Sink to SQL for Cetralized Logging
+    (2) Sink to SEQ for viewing 
+    (3) Sink to Console for viewing
+
+
+I would like to use this project to help learn and understand how to:
+(a) develop a WEB API application
+(b) use EF for Code-First Migration driven Development process
+(c) Test the API endpoints using xUNit
+(d) Consume the API endpoints using the latest Angular (version 22)
+
+I would be using Visual Studio 2026 to do the development.
+
+I wish to start by generating the code for the WEB API Project.   
+But then, before that, it would help if you could begin with providing me an extremely detailed step-by-step development process, so that I can also learn how to check-in the code into GITHUB time-to-time.
+

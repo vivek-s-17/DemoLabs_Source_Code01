@@ -1,6 +1,5 @@
 ﻿global using DemoWebApiDB.Data.Data;
 global using DemoWebApiDB.Data.Entities;
-global using DemoWebApiDB.Data.ReadModels;
 
 global using DemoWebApiDB.DtoModels.Categories;
 global using DemoWebApiDB.Infrastructure.Extensions;

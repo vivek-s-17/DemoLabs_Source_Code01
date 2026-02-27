@@ -1,4 +1,5 @@
-﻿using DemoWebApiDB.Infrastructure.Helpers;
+﻿using DemoWebApiDB.DtoModels.ReadModels.Reports;
+using DemoWebApiDB.Infrastructure.Helpers;
 
 
 namespace DemoWebApiDB.Services.Categories;
@@ -10,7 +11,7 @@ namespace DemoWebApiDB.Services.Categories;
 public sealed class CategoryService
 {
 
-    private readonly ApplicationDbContext _db;
+    private readonly ApplicationDbContext _dbContext;
     private readonly ILogger<CategoryService> _logger;
 
 
@@ -18,7 +19,7 @@ public sealed class CategoryService
         ApplicationDbContext db,
         ILogger<CategoryService> logger)
     {
-        _db = db;
+        _dbContext = db;
         _logger = logger;
     }
 
@@ -51,7 +52,7 @@ public sealed class CategoryService
         // ----- 02. Business Rule: Check for Duplicate
         
         bool exists 
-            = await _db.Categories.AnyAsync(c => c.Name.ToUpper() == normalizedName);
+            = await _dbContext.Categories.AnyAsync(c => c.Name.ToUpper() == normalizedName);
         if (exists)
         {
             _logger.LogWarning(
@@ -71,12 +72,12 @@ public sealed class CategoryService
             Description = dto.Description.NullIfWhiteSpace()
         };
 
-        _db.Categories.Add(entity);
+        _dbContext.Categories.Add(entity);
 
 
         // ----- 04. Flush the update to the Database
 
-        await _db.SaveChangesAsync();
+        await _dbContext.SaveChangesAsync();
 
 
         // ----- 05. Build the Location URI for the newly created entity
@@ -104,7 +105,7 @@ public sealed class CategoryService
     {
         // ----- 01. Fetch the entity
 
-        var entity = await _db.Categories
+        var entity = await _dbContext.Categories
             .AsNoTracking()
             .FirstOrDefaultAsync(c => c.CategoryId == id);
 
@@ -142,6 +143,7 @@ public sealed class CategoryService
 
 
         // ----- 05. Return Result
+
         return Result<CategoryReadDto>.Success(dto);
     }
 
@@ -174,7 +176,7 @@ public sealed class CategoryService
 
         // ----- 01. Fetch the entities (no tracking + ordered)
 
-        var entities = await _db.Categories
+        var entities = await _dbContext.Categories
             .AsNoTracking()
             .OrderBy(c => c.Name)                   // default sort on Name
             .ToListAsync();
@@ -242,7 +244,7 @@ public sealed class CategoryService
         // ----- 02. Fetch the entity to be updated
 
         var entity = 
-            await _db.Categories.FirstOrDefaultAsync(c => c.CategoryId == routeId);
+            await _dbContext.Categories.FirstOrDefaultAsync(c => c.CategoryId == routeId);
 
         if (entity is null)
         {
@@ -273,7 +275,8 @@ public sealed class CategoryService
             });
         }
 
-        _db.Entry(entity)
+        // Compare the incomingRowVersion with the ORIGINAL VALUE of the entity (in the DataContext)
+        _dbContext.Entry(entity)
             .Property(e => e.RowVersion)
             .OriginalValue = incomingRowVersion;
 
@@ -300,7 +303,7 @@ public sealed class CategoryService
         // ----- 05. Business Rule: Duplicate Check (excluding self)
 
         bool duplicateExists 
-            = await _db.Categories
+            = await _dbContext.Categories
                 .AnyAsync(c =>
                     c.CategoryId != routeId 
                     && c.Name.ToUpper() == normalizedName);
@@ -325,7 +328,7 @@ public sealed class CategoryService
 
         try
         {
-            await _db.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync();
         }
         catch (DbUpdateConcurrencyException)
         {
@@ -385,7 +388,7 @@ public sealed class CategoryService
 
         // ----- 02. Fetch the entity to be deleted
 
-        var entity = await _db.Categories
+        var entity = await _dbContext.Categories
             .FirstOrDefaultAsync(c => c.CategoryId == routeId);
 
         if (entity is null)
@@ -419,7 +422,7 @@ public sealed class CategoryService
             });
         }
 
-        _db.Entry(entity)
+        _dbContext.Entry(entity)
             .Property(e => e.RowVersion)
             .OriginalValue = incomingRowVersion;
 
@@ -427,7 +430,7 @@ public sealed class CategoryService
         // ----- 04. Business Rule: Don't delete Category that has Product(s). (Referencial Integrity)
 
         bool hasProducts = 
-            await _db.Products.AnyAsync(p => p.CtgryId == routeId);
+            await _dbContext.Products.AnyAsync(p => p.CtgryId == routeId);
 
         if (hasProducts)
         {
@@ -442,14 +445,14 @@ public sealed class CategoryService
         
         // ----- 05. Remove the entity
 
-        _db.Categories.Remove(entity);
+        _dbContext.Categories.Remove(entity);
         
 
         // ----- 06. Commit the changes to the Database, handling Concurrency Check
 
         try
         {
-            await _db.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync();
         }
         catch (DbUpdateConcurrencyException)
         {
@@ -472,6 +475,38 @@ public sealed class CategoryService
         // ----- 08. Return the Result
         
         return Result.Success();
+    }
+
+
+    /// <summary>
+    ///     Retrieves the Category-wise Product Count using STORED PROCEDURE in database.
+    ///     Used for generating the Report
+    /// </summary>
+    public async Task<Result<IReadOnlyList<CategoryProductCountReadModel>>> GetCategoryProductCountAsync()
+    {
+
+        _logger.LogInformation("Fetching Category Product count report from STORED PROCEDURE");
+
+        try
+        {
+            var data = await _dbContext.Database.SqlQuery<CategoryProductCountReadModel>(
+                    $"EXEC dbo.sp_GetCategoryProductSummary"
+                ).ToListAsync();
+
+            _logger.LogInformation(
+                "Category Product Count report data fetched from Stored Procedure. Rows: {RowCount}",
+                data.Count);
+
+            return Result<IReadOnlyList<CategoryProductCountReadModel>>.Success(data);
+        }
+        catch (Exception exp)
+        {
+            _logger.LogError(exp,
+                "Error while fetching Category Product Count report from Stored Procedure");
+
+            return Result<IReadOnlyList<CategoryProductCountReadModel>>.Error(
+                "Error fetching category product count report");
+        }
     }
 
 }

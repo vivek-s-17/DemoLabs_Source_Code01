@@ -32,31 +32,33 @@ public abstract class BaseApiController : ControllerBase
     {
         return result.Status switch
         {
-            ResultStatus.Success => NoContent(),
+            ResultStatus.Success 
+                => NoContent(),
 
-            ResultStatus.Created => StatusCode(StatusCodes.Status201Created),
+            ResultStatus.Created 
+                => StatusCode(StatusCodes.Status201Created),
 
-            ResultStatus.Accepted => Accepted(),
+            ResultStatus.Accepted 
+                => Accepted(),
 
-            ResultStatus.NotFound =>
-                NotFound(CreateProblemDetails(result)),
+            ResultStatus.NotFound 
+                => NotFound(CreateProblemDetails(result)),
 
-            ResultStatus.Conflict =>
-                Conflict(CreateProblemDetails(result)),
+            ResultStatus.Conflict 
+                => Conflict(CreateProblemDetails(result)),
 
-            ResultStatus.ValidationError =>
-                BadRequest(CreateValidationProblemDetails(result)),
+            ResultStatus.ValidationError 
+                => BadRequest(CreateValidationProblemDetails(result)),
 
-            ResultStatus.Unauthorized =>
-                Unauthorized(CreateProblemDetails(result)),
+            ResultStatus.Unauthorized 
+                => Unauthorized(CreateProblemDetails(result)),
 
-            ResultStatus.Forbidden =>
-                StatusCode(StatusCodes.Status403Forbidden,
-                    CreateProblemDetails(result)),
+            ResultStatus.Forbidden 
+                => StatusCode(StatusCodes.Status403Forbidden, CreateProblemDetails(result)),
 
-            _ => 
-                StatusCode(StatusCodes.Status500InternalServerError,
-                    CreateProblemDetails(result,
+            _ =>  StatusCode(StatusCodes.Status500InternalServerError,
+                    CreateProblemDetails(
+                        result: result,
                         title: "Unexpected error",
                         detail: "An unexpected server error occurred."))
         };
@@ -89,6 +91,7 @@ public abstract class BaseApiController : ControllerBase
             };
         }
 
+        // since failure, no data payload.
         return result.Status switch
         {
             ResultStatus.NotFound =>
@@ -104,12 +107,12 @@ public abstract class BaseApiController : ControllerBase
                 Unauthorized(CreateProblemDetails(result)),
 
             ResultStatus.Forbidden =>
-                StatusCode(StatusCodes.Status403Forbidden,
-                    CreateProblemDetails(result)),
+                StatusCode(StatusCodes.Status403Forbidden, CreateProblemDetails(result)),
 
             _ => 
                 StatusCode(StatusCodes.Status500InternalServerError,
-                    CreateProblemDetails(result,
+                    CreateProblemDetails(
+                        result: result,
                         title: "Unexpected error",
                         detail: "An unexpected server error occurred."))
         };

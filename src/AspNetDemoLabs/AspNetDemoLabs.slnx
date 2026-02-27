@@ -3,11 +3,14 @@
     <File Path="Readme.txt" />
   </Folder>
   <Project Path="DemoOptionsPattern/DemoOptionsPattern.csproj" />
+  <Project Path="DemoWebApi.Tests/DemoWebApi.Tests.csproj" Id="f411f066-d90b-4cd7-b6ff-d383fbd41395" />
   <Project Path="DemoWebApi/DemoWebApi.csproj" Id="df388c20-7a5f-4128-9a47-c200bb3e337e" />
+  <Project Path="DemoWebApiDB.Tests/DemoWebApiDB.Tests.csproj" Id="72272097-6be6-4830-9ae6-23d5594020c9" />
   <Project Path="DemoWebApiDB/DemoWebApiDB.csproj" Id="2d2ef15e-bdd2-4f1b-b1e0-3d202f137cca" />
   <Project Path="DemoWebApp1.Api/DemoWebApp1.Api.csproj" />
   <Project Path="DemoWebApp1.MinimalApi/DemoWebApp1.MinimalApi.csproj" />
   <Project Path="DemoWebApp1.MVC/DemoWebApp1.MVC.csproj" />
+  <Project Path="DemoWebApp1.MvcWithAuth/DemoWebApp1.MvcWithAuth.csproj" Id="378a69fc-a22e-4f4e-a551-aa0f939a3e33" />
   <Project Path="DemoWebApp1.ScalarDocs/DemoWebApp1.ScalarDocs.csproj" Id="1cbcdba8-1144-41e5-99a3-e10827cf2c3a" />
   <Project Path="DemoWebApp1.SwaggerDocs/DemoWebApp1.SwaggerDocs.csproj" Id="d7a05360-bafc-47cb-81dc-b0a8f2a5bc5f" />
   <Project Path="DemoWebApp1/DemoWebApp1.csproj" />

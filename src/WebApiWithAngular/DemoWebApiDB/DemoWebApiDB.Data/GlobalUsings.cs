@@ -8,4 +8,4 @@ global using Microsoft.EntityFrameworkCore;
 global using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 global using DemoWebApiDB.Data.Entities;
-global using DemoWebApiDB.Data.ReadModels;
+global using DemoWebApiDB.DtoModels.ReadModels;

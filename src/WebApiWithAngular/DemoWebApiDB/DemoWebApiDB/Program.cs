@@ -1,8 +1,10 @@
 using DemoWebApiDB.Services.Categories;
+using DemoWebApiDB.Services.Products;
 
 using Scalar.AspNetCore;
 
-using Microsoft.AspNetCore.Mvc;
+using Serilog;
+
 using Microsoft.AspNetCore.Mvc.Formatters;
 
 
@@ -10,23 +12,27 @@ var builder = WebApplication.CreateBuilder(args);
 
 //---------- Add services to the container.
 
+if( ! builder.Environment.IsEnvironment("Testing") )
+{
 
-// 1.  Grab the connection string from the appsetting.json file
-const string ConnectionStringNAME = "DefaultConnectionString";
-const string MigrationsAssemblyNAME = "DemoWebApiDB";
-string connectionString
-    = builder.Configuration.GetConnectionString(ConnectionStringNAME)
-      ?? throw new InvalidOperationException($"Connection String '{ConnectionStringNAME}' not defined in appsettings file");
+    // 1.  Grab the connection string from the appsetting.json file
+    const string ConnectionStringNAME = "DefaultConnectionString";
+    const string MigrationsAssemblyNAME = "DemoWebApiDB";
+    string connectionString
+        = builder.Configuration.GetConnectionString(ConnectionStringNAME)
+          ?? throw new InvalidOperationException($"Connection String '{ConnectionStringNAME}' not defined in appsettings file");
 
-// 2. Register the DataContext Service into the DI Container which uses the SQL Server
-builder.Services
-    .AddDbContext<ApplicationDbContext>(options =>
-    {
-        // Register the SQL Server middleware.
-        options.UseSqlServer(
-            connectionString: connectionString,
-            builderOptions => builderOptions.MigrationsAssembly(MigrationsAssemblyNAME) );
-    });
+    // 2. Register the DataContext Service into the DI Container which uses the SQL Server
+    builder.Services
+        .AddDbContext<ApplicationDbContext>(options =>
+        {
+            // Register the SQL Server middleware.
+            options.UseSqlServer(
+                connectionString: connectionString,
+                builderOptions => builderOptions.MigrationsAssembly(MigrationsAssemblyNAME));
+        });
+
+}
 
 // 3. Register Controllers
 //    Ensure Content Negotiation and Serialization Support for XML and JSON 
@@ -52,7 +58,7 @@ builder.Services
             = System.Text.Json.Serialization.JsonUnmappedMemberHandling.Disallow;
     });
     // NOTE: I am not enabling support for XML serialization since most productino APIs support JSON only.
-    //       returning 406 "Not Acceptable" for unsupported formats, including XML.
+    //       return 406 "Not Acceptable" for unsupported formats, including XML.
     // .AddXmlSerializerFormatters();               // Remove support for XML serialization
 
 
@@ -85,14 +91,19 @@ builder.Services
     .AddProblemDetails();
 
 
-#region Application Services
-
 // 7. Register application services to the DI Container
 
-builder.Services
-    .AddScoped<CategoryService>();
+builder.Services.AddScoped<CategoryService>();
+builder.Services.AddScoped<ProductService>();
 
-#endregion
+// 8. Register the Serilog Service
+
+Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration)
+    .Enrich.FromLogContext()
+    .CreateLogger();
+
+builder.Host.UseSerilog();
 
 
 var app = builder.Build();
@@ -103,10 +114,27 @@ var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
+
     app.MapOpenApi();
 
     // Enable API Documentation middleware to work with OpenAPI
     app.MapScalarApiReference();
+
+
+    // Add the CorrelationId middlware needed for Serilog
+    app.Use(async (context, next) =>
+    {
+        var correlationId = context.TraceIdentifier;
+
+        using (Serilog.Context.LogContext.PushProperty("CorrelationId", correlationId))
+        {
+            await next();
+        }
+    });
+
+    // Add Serilog Request Logging
+    app.UseSerilogRequestLogging();
+
 }
 
 app.UseHttpsRedirection();

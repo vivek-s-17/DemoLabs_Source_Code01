@@ -11,8 +11,8 @@ public sealed record class ProductCreateDto
     ///     Name of the product.
     ///     Must be unique within a category.
     /// </summary>
-    [property: Required(ErrorMessage = "Product name is required.")]
-    [property: StringLength(
+    [Required(ErrorMessage = "Product name is required.")]
+    [StringLength(
         maximumLength: 50, 
         MinimumLength = 2,
         ErrorMessage = "Product Name must be between {2} and {1} characters.")]
@@ -22,7 +22,7 @@ public sealed record class ProductCreateDto
     /// <summary>
     ///     Price of the Product.
     /// </summary>
-    [property: Range(
+    [Range(
         minimum: 0,
         maximum: short.MaxValue,
         ErrorMessage = "Price must be between {1} and {2}.")]
@@ -32,7 +32,7 @@ public sealed record class ProductCreateDto
     /// <summary>
     ///     Quantity in stock.
     /// </summary>
-    [property: Range(
+    [Range(
         minimum: 0, 
         maximum: int.MaxValue,
         ErrorMessage = "Quantity cannot be negative.")]
@@ -42,7 +42,7 @@ public sealed record class ProductCreateDto
     /// <summary>
     ///     Category to which the product belongs to.
     /// </summary>
-    [property: Required(ErrorMessage = "CategoryId is required.")]
+    [Required(ErrorMessage = "CategoryId is required.")]
     int CategoryId
 
 );

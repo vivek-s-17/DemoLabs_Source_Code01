@@ -7,9 +7,9 @@
 /// </summary>
 public sealed record class CategoryDeleteDto
 (
-    [property: Required]
+    [Required]
     int CategoryId,
 
-    [property: Required]
+    [Required]
     string RowVersion
 );

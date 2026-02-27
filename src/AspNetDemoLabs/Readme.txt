@@ -74,3 +74,24 @@ SECURITY CONCEPTS
         - Permission                        ]
         - Claims                            ]
 
+----------------------
+
+TYPES OF MODELS
+
+DATA MODEL / ENTITY MODEL => table in DB (EF) 
+	(includes CHANGE TRACKING INFO - Original/Current version)
+DTO MODEL  => in/out API <=> Other apps (no change tracking)
+READMODEL  => out from db (DB VIEW)
+		TO service/controller  (no change tracking)
+----------------------
+DOMAINMODEL	from one layer to the next 
+		- ALWAYS AN AGGREGATED OBJECT
+		- should be MAPPED TO a Business Model/Concept
+		- will have all Business Rules/Policies applied on it.
+
+VIEWMODEL  => in/out View (UI Layer) <> Controller
+  InputModel => bound to the UI object (textbox, dropdown)
+                an Observable object -INotifyPropertyChange 
+		        textboxEmail.value <-> InputModel.Email 
+  + ViewState   (TempData, ViewBag, ViewState, SessionState, ApplicationState)
+

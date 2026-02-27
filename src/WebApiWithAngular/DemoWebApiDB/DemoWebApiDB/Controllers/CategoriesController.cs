@@ -1,6 +1,8 @@
 ﻿using DemoWebApiDB.DtoModels.Categories;
+using DemoWebApiDB.DtoModels.ReadModels.Reports;
 using DemoWebApiDB.Infrastructure.Results;
 using DemoWebApiDB.Services.Categories;
+
 
 namespace DemoWebApiDB.Controllers;
 
@@ -196,6 +198,37 @@ public sealed class CategoriesController : BaseApiController
         [FromBody] CategoryDeleteDto dto)
     {
         var result = await _service.DeleteAsync(id, dto);
+        return HandleResult(result);
+    }
+
+    #endregion
+
+
+    #region REPORTS
+
+
+    // GET https://localhost:xxxx/api/categories/reports/product-count
+    /// <summary>
+    /// 	Retrieves Category-wise Product Count report from STORED PROCEDURE.
+    /// </summary>
+    /// <remarks>
+    /// 	Uses STORED PROCEDURE:
+    /// 	dbo.usp_Category_ProductCount
+    /// 
+    /// 	Demonstrates how Entity Framework Core executes stored procedures
+    /// 	and maps results to read-only projection models.
+    /// </remarks>
+    [HttpGet("reports/product-count")]
+    [EndpointSummary("Get category-wise product count report")]
+    [EndpointDescription(
+        "Returns category-wise number of products using a STORED PROCEDURE. " +
+        "Demonstrates executing stored procedures via Entity Framework Core and mapping results to a read-only model."
+    )]
+    [ProducesResponseType(typeof(IReadOnlyList<CategoryProductCountReadModel>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> GetCategoryProductCountReport()
+    {
+        var result = await _service.GetCategoryProductCountAsync();
         return HandleResult(result);
     }
 
