@@ -41,7 +41,7 @@ public sealed class Category_Create_Tests
     {
         // ----- Arrange
         using var factory = new CustomWebApplicationFactory();
-        using var client = factory.CreateClient();
+        using var httpClient = factory.CreateClient();
 
         var dto = new CategoryCreateDto(
             Name: "Furniture",
@@ -50,7 +50,7 @@ public sealed class Category_Create_Tests
 
         // ----- Act
         var response 
-            = await client.PostAsJsonAsync("/api/categories", dto, TestContext.Current.CancellationToken);
+            = await httpClient.PostAsJsonAsync("/api/categories", dto, TestContext.Current.CancellationToken);
 
         // ------ Assert HTTP status
         response.StatusCode.Should().Be(HttpStatusCode.Created);
@@ -58,14 +58,14 @@ public sealed class Category_Create_Tests
         // ------ Assert Location header exists
         response.Headers.Location.Should().NotBeNull();
 
+        // ----- Assert Location header returns the correct path
         var location = response.Headers.Location!.ToString();
         location.Should().StartWith("/api/categories/");
 
-        // Verify inserted into database
+        // ----- Assert that the data was inserted into the database
         using var scope = factory.Services.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-
-        var exists = db.Categories.Any(c => c.Name == "Furniture");
+        var exists = db.Categories.Any(c => c.Name == dto.Name);
         exists.Should().BeTrue();
     }
 
@@ -77,6 +77,7 @@ public sealed class Category_Create_Tests
     [Fact]
     public async Task CreateCategory_Return400_WhenInvalidPayload()
     {
+        // ------ Arrange
         using var factory = new CustomWebApplicationFactory();
         using var client = factory.CreateClient();
 
@@ -85,15 +86,19 @@ public sealed class Category_Create_Tests
             Description: "Invalid category"
         );
 
+        // ----- Act
         var response 
             = await client.PostAsJsonAsync( "/api/categories", dto, TestContext.Current.CancellationToken);
 
+        // ----- Assert that the response is BadRequest
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
 
+        // ----- Assert that the response provides ProblemDetails
         var problem 
             = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>(TestContext.Current.CancellationToken);
-
         problem.Should().NotBeNull();
+
+        // ----- Assert that the ProblemDetails provides info on Name
         problem!.Errors.Should().ContainKey("Name");
     }
 
@@ -101,6 +106,7 @@ public sealed class Category_Create_Tests
     [Fact]
     public async Task CreateCategory_Return400_WhenWrongDatatype()
     {
+        // ----- Arrange
         using var factory = new CustomWebApplicationFactory();
         using var client = factory.CreateClient();
 
@@ -111,13 +117,15 @@ public sealed class Category_Create_Tests
         }
         """;
 
+        // ----- Act
         var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
-
         var response = await client.PostAsync(
             "/api/categories",
             content,
             TestContext.Current.CancellationToken);
 
+        // ----- Assert that the response is BadRequest
+        //       NOTE: It won't have ProblemDetails since the payload was invalid.
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
 
@@ -129,18 +137,20 @@ public sealed class Category_Create_Tests
     [Fact]
     public async Task CreateCategory_Return409_WhenDuplicate()
     {
-        // Seed already contains Electronics (from TestDatabaseSeeder)
+        // ----- Arrange
         using var factory = new CustomWebApplicationFactory();
         using var client = factory.CreateClient();
 
         var dto = new CategoryCreateDto(
-            Name: "Electronics",
+            Name: "Electronics",                    // Seed data contains Electronics (check TestDatabaseSeeder)
             Description: "Duplicate attempt"
         );
 
+        // ----- Act
         var response 
             = await client.PostAsJsonAsync("/api/categories", dto, TestContext.Current.CancellationToken);
 
+        // ----- Assert that response contains HTTP 409 "CONFLICT"
         response.StatusCode.Should().Be(HttpStatusCode.Conflict);
     }
 

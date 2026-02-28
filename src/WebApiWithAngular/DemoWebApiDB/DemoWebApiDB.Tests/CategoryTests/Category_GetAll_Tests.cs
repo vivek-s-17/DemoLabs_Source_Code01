@@ -21,6 +21,14 @@ namespace DemoWebApiDB.Tests.CategoryTests;
 /// </summary>
 public sealed class Category_GetAll_Tests
 {
+    private readonly ITestOutputHelper _outputHelper;
+
+    public Category_GetAll_Tests(ITestOutputHelper outputHelper)
+    {
+        _outputHelper = outputHelper;
+    }
+
+
     [Fact]
     public async Task GetAllCategories_Return200_AndOrderedList()
     {
@@ -56,6 +64,12 @@ public sealed class Category_GetAll_Tests
 
         categories!.First().CreatedAtUtc.Should().NotBe(default);
         categories!.First().RowVersion.Should().NotBeNullOrWhiteSpace();
+
+        _outputHelper.WriteLine("Data received from API: ");
+        foreach (var category in categories) 
+        {
+            _outputHelper.WriteLine($"{category.CategoryId} {category.Name}");
+        }
     }
 
 
