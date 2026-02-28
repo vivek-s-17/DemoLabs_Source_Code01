@@ -482,6 +482,11 @@ public sealed class CategoryService
     ///     Retrieves the Category-wise Product Count using STORED PROCEDURE in database.
     ///     Used for generating the Report
     /// </summary>
+    /// <remarks>
+    ///     VERY IMPORTNAT NOTE:
+    ///     SQLite does not support STORED PROCEDURES.
+    ///     I have implemented a fallback code block only to clear the Integration Tests.
+    /// </remarks>
     public async Task<Result<IReadOnlyList<CategoryProductCountReadModel>>> GetCategoryProductCountAsync()
     {
 
@@ -489,13 +494,35 @@ public sealed class CategoryService
 
         try
         {
-            var data = await _dbContext.Database.SqlQuery<CategoryProductCountReadModel>(
-                    $"EXEC dbo.sp_GetCategoryProductSummary"
-                ).ToListAsync();
+            List<CategoryProductCountReadModel> data;
 
-            _logger.LogInformation(
-                "Category Product Count report data fetched from Stored Procedure. Rows: {RowCount}",
-                data.Count);
+            if(_dbContext.IsSqlite)
+            {
+                data = await _dbContext.Categories
+                    .Select(c => new CategoryProductCountReadModel
+                    {
+                        CategoryId = c.CategoryId,
+                        CategoryName = c.Name,
+                        ProductCount = _dbContext.Products
+                            .Count(p => p.CtgryId == c.CategoryId)
+                    })
+                    .ToListAsync();
+
+                _logger.LogInformation(
+                    "Category Product Count report data fetched. Rows: {RowCount}",
+                    data.Count);
+            }
+            else
+            {
+                data = await _dbContext.Database
+                    .SqlQuery<CategoryProductCountReadModel>(
+                        $"EXEC dbo.sp_GetCategoryProductSummary"
+                    ).ToListAsync();
+
+                _logger.LogInformation(
+                    "Category Product Count report data fetched from Stored Procedure. Rows: {RowCount}",
+                    data.Count);
+            }
 
             return Result<IReadOnlyList<CategoryProductCountReadModel>>.Success(data);
         }

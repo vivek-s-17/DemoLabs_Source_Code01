@@ -1,4 +1,5 @@
 ﻿using DemoWebApiDB.DtoModels.Products;
+using DemoWebApiDB.DtoModels.ReadModels;
 using DemoWebApiDB.Infrastructure.Helpers;
 
 
@@ -529,15 +530,43 @@ public sealed class ProductService
     ///     - Ordered by ProductName
     ///     - Maps ReadModel to DTO
     ///     - Logs summary only
+    ///     
+    ///     VERY IMPORTANT NOTE:
+    ///     SQLite does not support VIEWS.
+    ///     I have implemented a fallback code block only to clear the Integration Tests.
     /// </remarks>
     public async Task<Result<IReadOnlyList<ProductWithCategoryDto>>> GetProductsWithCategoryAsync()
     {
         // ----- 01. Fetch from VIEW (no tracking + ordered)
 
-        var entities = await _dbContext.ProductsWithCategoryView
+        List<ProductWithCategoryReadModel> entities;
+
+        if (_dbContext.IsSqlite)
+        {
+            // Fallback code for providing data using SQLite (which is used for Integration Testing only)
+            entities = await _dbContext.Products
+                    .Include(p => p.Category)
+                    .AsNoTracking()
+                    .OrderBy(p => p.ProductName)
+                    .Select(p => new ProductWithCategoryReadModel
+                    {
+                        Id = p.ProductId,
+                        ProductName = p.ProductName,
+                        Price = p.Price,
+                        QtyInStock = p.QtyInStock,
+                        CategoryId = p.CtgryId,
+                        CategoryName = p.Category!.Name
+                    })
+                    .ToListAsync();
+        }
+        else
+        {
+            // Fetch the data from SQL SERVER VIEW
+            entities = await _dbContext.ProductsWithCategoryView
             .AsNoTracking()
             .OrderBy(p => p.ProductName)
             .ToListAsync();
+        }
 
 
         // ----- 02. Map to DTO

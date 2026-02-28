@@ -5,14 +5,23 @@
 ///     Primary EF Core DbContext for the application.
 ///     Integrates ASP.NET Identity and domain entities.
 /// </summary>
+/// <remarks>
+///     This DataContext class is configured to provide support to work with SQLite (used for "Testing" Environment)
+/// </remarks>
 public class ApplicationDbContext
     : IdentityDbContext
 {
 
-    private bool IsSqlite 
+    /// <summary>
+    ///     Flag indicating if the ApplicationDbContext is running SqlLite in "Testing" Environment
+    /// </summary>
+    public bool IsSqlite 
         => Database.ProviderName?.Contains("Sqlite") == true;           // used by "Testing" Environment
 
-    private bool IsSqlServer 
+    /// <summary>
+    ///     Flag indicating if the ApplicationDbContext is running in non-Testing Environment
+    /// </summary>
+    public bool IsSqlServer 
         => Database.ProviderName?.Contains("SqlServer") == true;        // used by all other Environments
 
 
