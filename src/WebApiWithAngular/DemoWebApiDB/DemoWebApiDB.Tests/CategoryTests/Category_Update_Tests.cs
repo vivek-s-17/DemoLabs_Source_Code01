@@ -20,7 +20,6 @@ namespace DemoWebApiDB.Tests.CategoryTests;
 ///     - full pipeline integration
 /// </summary>
 public sealed class Category_Update_Tests
-    : IClassFixture<CustomWebApplicationFactory>
 {
     private readonly ITestOutputHelper _testOutputHelper;
 

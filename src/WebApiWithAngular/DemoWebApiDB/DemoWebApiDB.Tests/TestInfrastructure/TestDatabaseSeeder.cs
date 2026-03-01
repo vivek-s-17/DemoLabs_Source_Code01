@@ -14,11 +14,11 @@ internal static class TestDatabaseSeeder
 
     public static void Seed(ApplicationDbContext db)
     {
-        // Prevent duplicate seeding
-        if (db.Categories.Any())
-        {
-            return;
-        }
+        // Prevent duplicate seeding (can occur due to race conditions during parallel runs of tests)
+        db.Categories.RemoveRange(db.Categories);
+        db.Products.RemoveRange(db.Products);
+        db.SaveChanges();
+
 
         var cat1 = new Category { Name = "Electronics" };
         var cat2 = new Category { Name = "Stationery" };

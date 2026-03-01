@@ -18,7 +18,7 @@ public class TestDemoController : ControllerBase
     }
 
 
-    [HttpGet]
+    [HttpGet("IndexAsync")]
     public async Task<IActionResult> IndexAsync()
     {
         var message = await Task<string>.Run(() => "Microsoft");

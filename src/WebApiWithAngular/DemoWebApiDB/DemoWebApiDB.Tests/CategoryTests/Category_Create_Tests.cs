@@ -23,7 +23,6 @@ namespace DemoWebApiDB.Tests.CategoryTests;
 ///     - Database verification
 /// </summary>
 public sealed class Category_Create_Tests
-    : IClassFixture<CustomWebApplicationFactory>
 {
 
     private readonly ITestOutputHelper _testOutputHelper;

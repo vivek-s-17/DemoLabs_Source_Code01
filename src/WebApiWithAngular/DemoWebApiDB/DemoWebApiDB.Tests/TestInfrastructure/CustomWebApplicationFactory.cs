@@ -69,9 +69,10 @@ public sealed class CustomWebApplicationFactory
             using var scope = provider.CreateScope();
             var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
-            db.Database.EnsureCreated();        // ensure Schema is created for SQLite
-            db.Database.Migrate();              // apply all migrations
-            
+            db.Database.EnsureDeleted();        // in case cached db exists, delete it.  Possible due to race conditions.
+            db.Database.EnsureCreated();        // 
+            db.Database.Migrate();              // ensure Schema is created for SQLite and apply all migrations
+
             TestDatabaseSeeder.Seed(db);        // seed the test data
         });
     }
