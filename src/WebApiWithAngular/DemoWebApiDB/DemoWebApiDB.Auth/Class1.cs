@@ -1,4 +1,4 @@
-﻿namespace DemoWebApi.Auth
+﻿namespace DemoWebApiDB.Auth
 {
     public class Class1
     {

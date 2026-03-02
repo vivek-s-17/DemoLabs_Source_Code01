@@ -1,10 +1,7 @@
 using DemoWebApiDB.Services.Categories;
 using DemoWebApiDB.Services.Products;
-
 using Scalar.AspNetCore;
-
 using Serilog;
-
 using Microsoft.AspNetCore.Mvc.Formatters;
 
 
@@ -68,23 +65,25 @@ builder.Services
 
 
 // 5. Register automatic model validation support with RFC7807 ProblemDetails response
-builder.Services.Configure<ApiBehaviorOptions>(options =>
-{
-    options.InvalidModelStateResponseFactory 
-        = context =>
-        {
-            var problemDetails = new ValidationProblemDetails(context.ModelState)
+builder.Services
+    .Configure<ApiBehaviorOptions>(options =>
+    {
+        options.InvalidModelStateResponseFactory 
+            = context =>
             {
-                Status = StatusCodes.Status400BadRequest,
-                Title = "Validation failed",
-                Detail = "One or more validation errors occurred.",
-                Instance = context.HttpContext.Request.Path,
-                // TODO: Add TraceId and CoRelationId support to the ValidationProblemDetails model in future.
-            };
+                var problemDetails = new ValidationProblemDetails(context.ModelState)
+                {
+                    Status = StatusCodes.Status400BadRequest,
+                    Title = "Validation failed",
+                    Detail = "One or more validation errors occurred.",
+                    Instance = context.HttpContext.Request.Path,
+                    // TODO: Add TraceId and CoRelationId support to the ValidationProblemDetails model in future.
+                };
 
-            return new BadRequestObjectResult(problemDetails);
-        };
-});
+                return new BadRequestObjectResult(problemDetails);
+            };
+    });
+
 
 // 6. Register support for ProblemDetails for failed requests to the DI Container
 builder.Services
@@ -96,14 +95,40 @@ builder.Services
 builder.Services.AddScoped<CategoryService>();
 builder.Services.AddScoped<ProductService>();
 
-// 8. Register the Serilog Service
 
+// 8. Register the Serilog Service
+//    (a) Add the ScalarApiReference middleware to read OpenAPI documentation
+//    (b) Add the CorrelationId middleware before adding the ScalarApiReference middleware
 Log.Logger = new LoggerConfiguration()
     .ReadFrom.Configuration(builder.Configuration)
     .Enrich.FromLogContext()
     .CreateLogger();
 
 builder.Host.UseSerilog();
+
+
+// 9. Configure CORS Policy support needed for Angular Project
+//    And enable the registered policy by adding the Middleware.
+string? angularDevServer 
+    = builder.Configuration.GetValue<string>("MyAppSettings:AngularDevServer");
+string? angularCorsPolicyName
+    = builder.Configuration.GetValue<string>("MyAppSettings:AngularCORSPolicyName");
+if( !string.IsNullOrEmpty(angularDevServer ) 
+    &&  !string.IsNullOrEmpty(angularCorsPolicyName ) )
+{
+    builder.Services.AddCors(options =>
+    {
+        options.AddPolicy(angularCorsPolicyName, policy =>
+        {
+            policy
+                .WithOrigins(angularDevServer)
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .AllowCredentials();                        // Needed for auth scenarios
+        });
+    });
+}
+
 
 
 var app = builder.Build();
@@ -132,8 +157,18 @@ if (app.Environment.IsDevelopment())
         }
     });
 
+
     // Add Serilog Request Logging
     app.UseSerilogRequestLogging();
+
+
+    // Add the registered CORS policy Middleware.
+    // NOTE: must come before app.UseAuthorization() and app.MapControllers()
+    if (!string.IsNullOrEmpty(angularDevServer)
+        && !string.IsNullOrEmpty(angularCorsPolicyName))
+    {
+        app.UseCors(angularCorsPolicyName);
+    }
 
 }
 
