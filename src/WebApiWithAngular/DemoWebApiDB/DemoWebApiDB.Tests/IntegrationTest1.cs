@@ -24,10 +24,14 @@ public sealed class IntegrationTest1
 {
 
     private readonly HttpClient _httpClient;
+    private readonly ITestOutputHelper _output;
 
-
-    public IntegrationTest1(CustomWebApplicationFactory factory)
+    public IntegrationTest1(
+        CustomWebApplicationFactory factory,
+        ITestOutputHelper output)
     {
+        _output = output;
+
         // Receive the FIXTURE - CustomWebApplicationFactory object by Dependency Injection,
         // and initialize the HttpClient object.
         // NOTE: The ApplicationDbContext from the CustomWebApplicationFactory is a "scoped" DI service,
