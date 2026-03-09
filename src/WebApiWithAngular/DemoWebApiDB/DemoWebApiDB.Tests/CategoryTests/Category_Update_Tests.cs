@@ -1,10 +1,6 @@
-﻿using System.Net;
-using System.Net.Http.Json;
-using DemoWebApiDB.Data.Data;
+﻿using DemoWebApiDB.Data.Data;
 using DemoWebApiDB.DtoModels.Categories;
 using DemoWebApiDB.Tests.TestInfrastructure;
-using FluentAssertions;
-using Microsoft.Extensions.DependencyInjection;
 
 
 namespace DemoWebApiDB.Tests.CategoryTests;
@@ -164,22 +160,28 @@ public sealed class Category_Update_Tests
     #region CONCURRENCY
 
     [Fact]
-    public async Task UpdateCategory_Return409_WhenConcurrencyConflict()
+    public async Task UpdateCategory_Return412_WhenConcurrencyConflict()
     {
         // ----- Arrange
+    
         using var factory = new CustomWebApplicationFactory();
         using var client = factory.CreateClient();
         using var scope = factory.Services.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
+        // Fetch a category from seeded data
         var category = db.Categories.First();
+
+        // Capture the ORIGINAL RowVersion
         var originalRowVersion = Convert.ToBase64String(category.RowVersion);
 
         // ----- ACT: simulate another user update directly to the data in database
+
         category.Name = "Changed by another user";
         db.SaveChanges();
 
-        // -----ACT: now attempt update with OLD rowversion 
+        // ----- ACT: now attempt update with OLD rowversion 
+
         var dto = new CategoryUpdateDto(
             CategoryId: category.CategoryId,
             Name: "My update",
@@ -189,8 +191,12 @@ public sealed class Category_Update_Tests
         var response = await client.PutAsJsonAsync(
             $"/api/categories/{category.CategoryId}", dto, TestContext.Current.CancellationToken);
 
-        // ----- ASSERT: 409 "Conflict"
-        response.StatusCode.Should().Be(HttpStatusCode.Conflict);
+        // ----- ASSERT: 412 "PreconditionFailed"
+        response.StatusCode.Should().Be(HttpStatusCode.PreconditionFailed);
+
+        // ----- ASSERT: response body contains problem details with concurrency message
+        var problem = await response.Content.ReadFromJsonAsync<ProblemDetails>(TestContext.Current.CancellationToken);
+        problem?.Status.Should().Be(412);
     }
 
     #endregion
